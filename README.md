@@ -1,2 +1,2 @@
 # OpenShift
-Practicing the use of OpenShift and Kubernetes
+Pratique de l'utilisation d'OpenShift et Kubernetes – Practicing the use of OpenShift and Kubernetes
