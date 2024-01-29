@@ -19,7 +19,7 @@ Suivant le tutoriel [Learn Kubernetes using the Developer Sandbox for Red Hat Op
 	- se login au cluster : `oc login -u developer https://api.crc.testing:6443`
 
 ## Mise en place de l'application
-Suivant [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift) 
+(Suivant [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift))
 - créer un nouveau projet: (`oc status` && `oc projects` pour jeter un coup d'oeil sur le contexte) `oc new-project sampleproject`
 - télécharger les fichiers nécessaires à l'application:
 	- `git clone https://github.com/redhat-developer-demos/quotesweb.git`
