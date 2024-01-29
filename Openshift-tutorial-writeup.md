@@ -50,11 +50,12 @@ Browse the frontend website: `kubectl get route` => http://quotesweb-kubectl-tut
 
 - scale the backend by create replicas of the "quotes" Pod: `kubectl scale deployments/quotes --replicas=3` (check with `kubectl get pods`)
 ### Create a MariaDB backend and switch to it
-Create a Persistent Volume Claim to store the data files for the MariaDB app even when the pods running MariaDB are deleted : `kubectl create -f mysqlvolume.yaml`
+In `quotemysql/`:
+- Create a Persistent Volume Claim to store the data files for the MariaDB app even when the pods running MariaDB are deleted : `kubectl create -f mysqlvolume.yaml`
 
-Create a secret to be used with the database: `kubectl create -f mysql-secret.yaml`
+- Create a secret to be used with the database: `kubectl create -f mysql-secret.yaml`
 
-Export the name of the pod running MariaDB: `export PODNAME=$(a=$(kubectl get pods | grep 'mysql' | awk '{print $1}') && set – $a && echo $1)`
+- Save the name of the pod running MariaDB to a variable: `export PODNAME=$(a=$(kubectl get pods | grep 'mysql' | awk '{print $1}') && set – $a && echo $1)`
 
 Create the database (copy the commands into the pod and execute the script)
 - `kubectl cp ./create_database_quotesdb.sql $PODNAME:/tmp/create_database_quotesdb.sql`
