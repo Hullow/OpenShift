@@ -2,7 +2,7 @@ Suivant le tutoriel [Learn Kubernetes using the Developer Sandbox for Red Hat Op
 ## Installer OpenShift Local 2.31 et la ligne de commande Kubernetes
 
 - N.b.: décision d'utiliser OpenShift local plutôt que le Developer Sandbox suggéré dans le tutoriel, en raison d'une difficulté à obtenir les identifiants pour se login dans le Sandbox. Rétrospectivement, les identifiants étaient probablement obtenables avec la commande (`crc console --credentials`)
-- Télécharger le paquet d'installation et et le "pull secret" depuis https://console.redhat.com/openshift/create/local
+- Télécharger le paquet d'installation et et le "pull secret" depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le "pull secret", qui permet de pull des images de Red Hat, est demandé lors de l'installation)
 -  Installer la ligne de commande de Kubernetes (n.b.: certes pas vraiment nécessaire au final, les commandes étant les mêmes qu'avec `oc`, mais il s'agissait initialement de suivre un tutoriel à la lettre): `sudo port install kubectl-1.29` (&& `kubectl version --output=yaml`)
 
 ## Mise en place d'OpenShift Local
