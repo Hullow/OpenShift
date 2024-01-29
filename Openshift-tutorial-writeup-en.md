@@ -1,7 +1,7 @@
 Following [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift)
 ## Installing OpenShift Local 2.31 and Kubernetes command line
 
-- N.b.: decided to use OpenShift Local instead of the Developer Sandbox, due to not knowing how to obtain the login credentials to log in to the Sandbox project. Retrospectively, credentials were likely availabel from running `crc console --credentials`)
+- N.b.: decided to use OpenShift Local instead of the Developer Sandbox, due to not knowing how to obtain the login credentials to log in to the Sandbox project. Retrospectively, credentials were likely available from running `crc console --credentials`)
 - Download package and pull secret from https://console.redhat.com/openshift/create/local
 - Run the installer .pkg (n.b.: no "Openshift Local" appears in "Applications" folder, contrary to installer message)
 -  install kubectl: `sudo port install kubectl-1.29` (&& `kubectl version --output=yaml`)
