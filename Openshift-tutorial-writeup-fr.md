@@ -1,28 +1,26 @@
 Suivant le tutoriel [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift)
 ## Installer OpenShift Local 2.31 et la ligne de commande Kubernetes
-
 - N.b.: en raison d'une difficulté à trouver les identifiants pour se connecter au cluster du Developer Sandbox tournant sur l'infrastructure Red Hat (et utilisé dans le tutoriel), décision d'utiliser OpenShift Local, qui permet de faire tourner un cluster localement, sur sa propre machine. Rétrospectivement, les identifiants étaient probablement obtenables avec la commande (`crc console --credentials`)
 - Télécharger le paquet d'installation et et le "pull secret" depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le "pull secret", qui permet de pull des images de Red Hat, est demandé lors de l'installation)
 -  Installer la ligne de commande de Kubernetes (n.b.: certes pas vraiment nécessaire au final, les commandes étant les mêmes qu'avec `oc`, mais il s'agissait initialement de suivre un tutoriel à la lettre): `sudo port install kubectl-1.29` (&& `kubectl version --output=yaml`)
 
 ## Mise en place d'OpenShift Local
+- `crc config set preset openshift` pour changer le preset à "Openshift"
 - `crc setup`: télécharge 4.4 GiB de données, 31 GiB à la décompression data (n.b.: `crc` est l'interface de ligne de commande pour OpenShift Local, signifiant "Code-Ready Containers", son ancien nom)
-- `crc start` => demande le pull secret (disponible [à la page de téléchargement précédemment mentionnée](https://console.redhat.com/openshift/create/local))
+- `crc start` pour lancer le cluster => demande le pull secret (disponible [à la page de téléchargement précédemment mentionnée](https://console.redhat.com/openshift/create/local))
 - quelques notes pertinentes sur les spécificités d'OpenShift Local ([Guide officiel](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.16/html-single/getting_started_guide/index#differences-from-production-openshift-install_gsg)):
 >- It uses a single node, which behaves as both a control plane and worker node.
 >- It disables the Cluster Monitoring Operator by default. This disabled Operator causes the corresponding part of the web console to be non-functional.
 >- The OpenShift Container Platform cluster runs in a virtual machine known as an _instance_. This might cause other differences, particularly with external networking.
 - vérifier la configuration de crc avec `crc config view` et son statut avec `crc status`
 - Le cluster peut être visionné et contrôlé par une interface graphique via la console web d'OpenShift à l'adresse: https://console-openshift-console.apps-crc.testing
-## Mise en place du Cluster
-- `crc config set preset openshift`+`crc setup` pour changer le preset à "Openshift"
-- `crc start` pour lancer OpenShift
 - Utiliser l'interface de ligne de commande d'OpenShift 'oc':
 	- l'ajouter au PATH : `eval $(crc oc-env)`
 	- se login au cluster : `oc login -u developer https://api.crc.testing:6443`
+
 ## Mise en place de l'application
 Following [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift) 
-- créer un nouveau projet:  (`oc status` &&) `oc new-project sampleproject`
+- créer un nouveau projet: (`oc status` && `oc projects`) `oc new-project sampleproject`
 - télécharger les fichiers nécessaires à l'application:
 	- `git clone https://github.com/redhat-developer-demos/quotesweb.git`
 	- `git clone https://github.com/redhat-developer-demos/quotemysql.git`
