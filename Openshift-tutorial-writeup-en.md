@@ -9,7 +9,7 @@ Following [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](h
 ## Setting up OpenShift locally
 - `crc setup`: this downloads 4.4 GiB of data, uncompresses 31 GiB) (n.b.: `crc` is the command line interface for OpenShift Local, and stands for "Code-Ready Containers", its former name)
 - `crc start` => prompts for pull secret (from [previous download page](https://console.redhat.com/openshift/create/local))
-- a few notes of relevance on OpenShift Local:
+- a few notes of relevance on OpenShift Local's specificities (from[ the "Getting Started" Guide](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.16/html-single/getting_started_guide/index#differences-from-production-openshift-install_gsg)):
 >- It uses a single node, which behaves as both a control plane and worker node.
 >- It disables the Cluster Monitoring Operator by default. This disabled Operator causes the corresponding part of the web console to be non-functional.
 >- The OpenShift Container Platform cluster runs in a virtual machine known as an _instance_. This might cause other differences, particularly with external networking.
