@@ -89,5 +89,19 @@ Change the backend to our MariaDB:
 ## Managing deployments
 - `kubectl delete pod <pod-name>`: removes a pod, which is then normally restarted automatically
 - `kubectl delete deployment <deployment-name>`: actually removes a pod and prevents it from being restarted
+- Troubleshooting "pending" Pods: https://learn.redhat.com/t5/DO280-Red-Hat-OpenShift/Pending-Pods/td-p/35635
+- [Manage resources in Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 ## Monitoring
 In Red Hat Openshift Local, core functionality monitoring [requires 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (or 15 GB), exceeding our system capacity
+
+P.S. on what I learnt and did not learn:
+Learnt:
+- How to set up a cluster and authenticate to it
+- How to Pod Deployments are configured (e.g. looking at .yaml files) and how Pods work together (including adding replicas)
+- How to view the cluster using the web console
+- How to diagnose some basic issues (lack of memory)
+
+Not learnt:
+- Learned about pods, but less about nodes, given that in OpenShift Local there is only one node, and no separation of roles between control plane and worker nodes (the node acts as both)
+- Cf. above: could not do much monitoring (the Cluster Monitoring Operator is disabled by default, and requires more RAM than my system can supply); closest I got was an error message for insufficient memory, shown with `oc describe pod <pod-name>`
+- Did not use the web console to make significant modifications, only to look at the results of my CLI commands

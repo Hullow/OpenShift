@@ -88,4 +88,16 @@ Utiliser notre base de données comme backend:
 - `kubectl delete pod <pod-name>`: arrête un Pod, qui est ensuite normalement relancé automatiquement
 - `kubectl delete deployment <deployment-name>`: arrête effectivement un Pod, sans qu'il soit relancé
 ## Monitoring
-Dans Red Hat Openshift Local, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système
+Dans Red Hat Openshift Local, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système.
+
+## Connaissances acquises
+### Appris:
+- Mettre un place un cluster et s'authentifier
+- Comment le Deployments des Pods sont configurés (notamment les fichiers .yaml) et comment les Pods fonctionnent ensemble (avec en plus l'ajout de Repliques)
+- Comment visualiser le cluster à travers la console web (vue développeur, vue administrateur)
+- Comment diagnostiquer des problèmes basiques (dans mon cas, le manque de mémoire empêchant un Pod d'être relancé)
+
+### Pas appris:
+- Les Nodes: il n'y a qu'un seul Node dans OpenShift Local, et pas de séparation des rôles entre le plan de contrôle et les worker Nodes
+- Monitoring: pas de possibilité de faire un réel monitoring du cluster et de ses composantes (manque de RAM pour activer le Cluster Monitoring Operator); tout au plus, une constatation d'un manque de mémoire via `oc describe pod <pod-name>`
+- Usage approfondi de la console web: Pas d'usage de la console web pour effectuer des modifications ou opérations importantes sur le cluster; seulement pour observer le résultat de mes commandes dans le Terminal
