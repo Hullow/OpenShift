@@ -62,7 +62,7 @@ Le frontend web permet d'afficher les citations servies par le backend. Dans le 
 Obtention de l'URL du frontend: 
 `kubectl get routes` (normalement, http://quotesweb-kubectl-tutorial.apps-crc.testing)
 
-Test de l'application: coller l'URL du backend (voir ci-dessus) dans le champ de saisie et cliquer sur le bouton "Start" pour charger les citations choisies au hasard
+Test de l'application: coller l'URL du backend (voir [section précédente](#Le-backend-simple)) dans le champ de saisie et cliquer sur le bouton "Start" pour charger les citations choisies au hasard
 
 - Redéploiement du backend "quotes" avec des répliques (*Replicas*) du *Pod*:
 `kubectl scale deployments/quotes --replicas=3` (vérifier avec `kubectl get pods`)
