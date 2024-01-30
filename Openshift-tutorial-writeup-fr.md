@@ -6,7 +6,7 @@ Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbo
 >- It disables the Cluster Monitoring Operator by default. This disabled Operator causes the corresponding part of the web console to be non-functional.
 >- The OpenShift Container Platform cluster runs in a virtual machine known as an _instance_. This might cause other differences, particularly with external networking.
 
-Il faut noter qu'en termes de ressources, faire tourner un cluster OpenShift "classique" (*OpenShift Container Platform*) dans *OpenShift Local* nécessite au moins 9 GB de RAM, 4 coeurs physiques de CPU, et 35 GB d'espace de stockage.
+Il faut noter qu'en termes de ressources, faire tourner un cluster OpenShift "classique" (*OpenShift Container Platform*) avec *OpenShift Local* nécessite au moins 9 GB de RAM, 4 coeurs physiques de CPU, et 35 GB d'espace de stockage.
 ## Installation et configuration initiale d'OpenShift Local 2.31 
 - Télécharger le paquet d'installation et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat, est demandé lors de l'installation)
 - L'outil de ligne de commande pour la configuration d'*OpenShift Local* est nommée `crc` d'après *Code-Ready Containers*, l'ancien nom du projet. Il permet de configurer et lancer un cluster, après quoi nous utiliserons la commande `kubectl` pour gérer ce dernier.
