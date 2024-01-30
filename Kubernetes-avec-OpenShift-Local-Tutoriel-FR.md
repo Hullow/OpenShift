@@ -3,10 +3,12 @@ Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbo
 >- It uses a single node, which behaves as both a control plane and worker node.
 >- It disables the Cluster Monitoring Operator by default. This disabled Operator causes the corresponding part of the web console to be non-functional.
 >- The OpenShift Container Platform cluster runs in a virtual machine known as an _instance_. This might cause other differences, particularly with external networking.
+
+Il faut noter qu'en termes de ressources, faire tourner un cluster OpenShift "classique" (*OpenShift Container Platform*) dans *OpenShift Local* nécessite au moins 9 GB de RAM, 4 coeurs physiques de CPU, et 35 GB d'espace de stockage.
 ## Installation et configuration initiale d'OpenShift Local 2.31 
-- Télécharger le paquet d'installation et et le "*pull secret*" depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le "pull secret", qui permet de pull des images de Red Hat, est demandé lors de l'installation)
+- Télécharger le paquet d'installation et et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat, est demandé lors de l'installation)
 - L'outil de ligne de commande pour la configuration d'*OpenShift Local* est nommée `crc` d'après *Code-Ready Containers*, l'ancien nom du projet. Il permet de configurer et lancer un cluster, après quoi nous utiliserons la commande `kubectl` pour gérer ce dernier.
-- Avant de mettre en place le cluster, il faut changer le *preset* à "Openshift":
+- Avant de mettre en place le cluster, il faut changer le *preset* à "Openshift" pour indiquer que l'on veut lancer un container OpenShift (soit de type *OpenShift Container Platform*, les autres options étant *Podman container runtime* et *Red Hat Device Edge*):e
 `crc config set preset openshift` 
 - Configuration:
 `crc setup`(dans mon cas, télécharge 4.4 GiB de données, 31 GiB à la décompression)
@@ -31,7 +33,7 @@ Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbo
 	- `git clone https://github.com/redhat-developer-demos/qotd-python.git`
 - Installation de l'outil de ligne de commande Kubernetes:
 Le tutoriel utilise l'outil (CLI) standard de Kubernetes `kubectl` pour gérer le cluster, et `kubectl` est utilisable également avec *OpenShift Local*. À noter que cet outil n'est pas vraiment nécessaire au final, les commandes étant les mêmes qu'avec `oc`, l'outil CLI d'OpenShift, mais il s'agissait initialement de suivre un tutoriel à la lettre. Pour installer `kubectl` (sur OS X, pour les autres systèmes utiliser les commandes usuelles):
-`sudo port install kubectl-1.29` (verification de la version installee `kubectl version --output=yaml`)
+`sudo port install kubectl-1.29` (verification de la version installée `kubectl version --output=yaml`)
 ### Le backend simple
 Ce backend est une API REST livrant des citations.
 Dans le dossier `qotd-python/k8s` :
@@ -44,10 +46,10 @@ Dans le dossier `qotd-python/k8s` :
 
 Une fois terminé:
 `kubectl get pods` (n.b.: ici, `oc get pods` serait équivalent, par exemple)
-- Récupération de l'URL:
+- Obtention de l'URL du backend:
 `kubectl get routes`
 - et enfin:  (+ avec `/random` à la fin), test du backend:
-`curl http://<the-URL-from-above>/quotes` 
+`curl http://<URL-du-dessus>/quotes` 
 ### Le frontend web
 Dans le dossier`quotesweb/k8s`:
 - Création d'un *Deployment*:
@@ -57,10 +59,12 @@ Dans le dossier`quotesweb/k8s`:
 - Création d'une *Route*:
 `kubectl create -f quotesweb-route.yaml`
 
-Visite du frontend:
-`kubectl get route` => http://quotesweb-kubectl-tutorial.apps-crc.testing. Coller l'URL du backend (voir ci-dessus) pour charger les citations choisies au hasard
+Obtention de l'URL du frontend: 
+`kubectl get routes` (normalement, http://quotesweb-kubectl-tutorial.apps-crc.testing)
 
-- Redéploiement du backend "quotes" avec des répliques du *Pod*:
+Test de l'application: coller l'URL du backend (voir ci-dessus) dans le champ de saisie et cliquer sur le bouton "Start" pour charger les citations choisies au hasard
+
+- Redéploiement du backend "quotes" avec des répliques (*Replicas*) du *Pod*:
 `kubectl scale deployments/quotes --replicas=3` (vérifier avec `kubectl get pods`)
 ### Le backend base de données
 Ce backend est constitué d'une base de données MariaDB, et sera utilisé en remplacement du précédent backend.
@@ -136,5 +140,5 @@ Dans le dossier `quotemysql/`:
 - Diagnostic des problèmes basiques (dans mon cas, le manque de mémoire empêchant un *Pod* d'être relancé)
 ### Pas appris:
 - Les *Nodes*: il n'y a qu'un seul *Node* dans *OpenShift Local*, et pas de séparation des rôles entre le plan de contrôle et les *worker Nodes*
-- Monitoring: pas de possibilité de faire un réel monitoring du cluster et de ses composantes, En effet, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système. Une constatation d'un manque de mémoire qui empechait le lancement d'un *Pod* a toutefois pu etre faite avec `oc describe pod <pod-name>`, mais sans détails.
+- Monitoring: pas de possibilité de faire un réel monitoring du cluster et de ses composantes, En effet, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système. Une constatation d'un manque de mémoire qui empêchait le lancement d'un *Pod* a toutefois pu être faite avec `oc describe pod <pod-name>`, mais sans détails.
 - Usage approfondi de la console web: pas d'usage de la console web pour effectuer des modifications ou opérations importantes sur le cluster; seulement pour observer le résultat de mes commandes dans le Terminal
