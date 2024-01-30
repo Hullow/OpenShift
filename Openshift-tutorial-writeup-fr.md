@@ -124,7 +124,7 @@ Dans le dossier `quotemysql/`:
 `kubectl set image deploy quotes quotes=quay.io/donschenck/quotes:v2`
 
 => fonctionne, nous avons maintenant un site qui charge des citations au hasard depuis la base de données
-## Gestion des Deployments
+## Gestion des Pods
 - Arrêt d'un *Pod*, qui est ensuite normalement relancé automatiquement:
 `kubectl delete pod <pod-name>`
 - Arrêt effectif d'un *Pod*, sans qu'il soit relancé:
