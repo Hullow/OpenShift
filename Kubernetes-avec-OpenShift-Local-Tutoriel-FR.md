@@ -51,7 +51,7 @@ Une fois terminé:
 - et enfin:  (+ avec `/random` à la fin), test du backend:
 `curl http://<URL-du-dessus>/quotes` 
 ### Le frontend web
-Dans le dossier`quotesweb/k8s`:
+Le frontend web permet d'afficher les citations servies par le backend. Dans le dossier`quotesweb/k8s`:
 - Création d'un *Deployment*:
 `kubectl create -f quotesweb-deployment.yaml`
 - Création d'un *Service*:
