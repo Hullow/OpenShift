@@ -21,93 +21,120 @@ Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbo
 	`eval $(crc oc-env)`
 	- se login au cluster:
 	`oc login -u developer https://api.crc.testing:6443`
-## Déploiement de l'application quotes
-- créer un nouveau projet:
+## Déploiement de l'application
+- Création d'un nouveau projet:
 (`oc status` && `oc projects` peuvent être utilisées pour jeter un coup d'oeil sur le contexte d'abord)
 `oc new-project sampleproject`
-Suivant [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift):
-- télécharger les fichiers nécessaires à l'application:
+- Clonage des composants de l'application en local:
 	- `git clone https://github.com/redhat-developer-demos/quotesweb.git`
 	- `git clone https://github.com/redhat-developer-demos/quotemysql.git`
 	- `git clone https://github.com/redhat-developer-demos/qotd-python.git`
+- Installation de l'outil de ligne de commande Kubernetes:
+Le tutoriel utilise l'outil (CLI) standard de Kubernetes `kubectl` pour gérer le cluster, et `kubectl` est utilisable également avec *OpenShift Local*. À noter que cet outil n'est pas vraiment nécessaire au final, les commandes étant les mêmes qu'avec `oc`, l'outil CLI d'OpenShift, mais il s'agissait initialement de suivre un tutoriel à la lettre. Pour installer `kubectl` (sur OS X, pour les autres systèmes utiliser les commandes usuelles):
+`sudo port install kubectl-1.29` (verification de la version installee `kubectl version --output=yaml`)
+### Le backend simple
+Ce backend est une API REST livrant des citations.
+Dans le dossier `qotd-python/k8s` :
+- Création d'un *Deployment* pour le *Pod* désiré:
+`kubectl create -f quotes-deployment.yaml`
+- Exposition du backend comme un *Service* au reste du cluster:
+`kubectl create -f service.yaml`
+- Création d'une *Route* pour permettre l'accès au backend de l'extérieur du cluster:
+`kubectl create -f route.yaml`
 
-## Installation de l'outil de ligne de commande Kubernetes
-- En plus de l'outil CLI d'Openshift `oc`, le tutoriel utilise l'outil (CLI) standard de Kubernetes `kubectl` pour gérer le cluster, et `kubectl` est utilisable également avec *OpenShift Local*. À noter que cet outil n'est pas vraiment nécessaire au final, les commandes étant les mêmes qu'avec `oc`, l'outil CLI d'OpenShift, mais il s'agissait initialement de suivre un tutoriel à la lettre. Pour installer `kubectl` (sur OS X, pour les autres systèmes utiliser les commandes usuelles):
-`sudo port install kubectl-1.29` (&& `kubectl version --output=yaml`)
-### Le backend "quotes" (une API REST livrant des citations)
-dans `qotd-python/k8s` :
-- créer un Deployment pour le Pod désiré : `kubectl create -f quotes-deployment.yaml`
-- exposer le backend comme un Service au reste du cluster: `kubectl create -f service.yaml`
-- créer une Route pour permettre l'accès au backend de l'extérieur du cluster: `kubectl create -f route.yaml`
-
-- une fois terminé, 
-	- `kubectl get pods` (ou `oc get pods`) pour vérifier si le pod tourne
-	- `kubectl get routes`pour trouver l'URL, et enfin:
-	- `curl http://<the-URL-from-above>/quotes` (+ avec `/random` à la fin) pour tester le backend
+Une fois terminé:
+`kubectl get pods` (n.b.: ici, `oc get pods` serait équivalent, par exemple)
+- Récupération de l'URL:
+`kubectl get routes`
+- et enfin:  (+ avec `/random` à la fin), test du backend:
+`curl http://<the-URL-from-above>/quotes` 
 ### Le frontend web
-Dans `quotesweb/k8s`:
-- créer un Deployment: `kubectl create -f quotesweb-deployment.yaml`
-- créer un Service: `kubectl create -f quotesweb-service.yaml`
-- créer une Route: `kubectl create -f quotesweb-route.yaml`
+Dans le dossier`quotesweb/k8s`:
+- Création d'un *Deployment*:
+`kubectl create -f quotesweb-deployment.yaml`
+- Création d'un *Service*:
+`kubectl create -f quotesweb-service.yaml`
+- Création d'une *Route*:
+`kubectl create -f quotesweb-route.yaml`
 
-Visiter le frontend: `kubectl get route` => http://quotesweb-kubectl-tutorial.apps-crc.testing. Coller l'URL du backend (voir ci-dessus) pour charger les citations choisies au hasard
+Visite du frontend:
+`kubectl get route` => http://quotesweb-kubectl-tutorial.apps-crc.testing. Coller l'URL du backend (voir ci-dessus) pour charger les citations choisies au hasard
 
-- redéployer le backend "quotes" avec des répliques du Pod: `kubectl scale deployments/quotes --replicas=3` (vérifier avec `kubectl get pods`)
-### Créer un backend MariaDB et l'utiliser
-Dans `quotemysql/`:
-- Créer un "Persistent Volume Claim" pour stocker les données pour la base de données même quand les Pods qui la font tourner sont supprimés: `kubectl create -f mysqlvolume.yaml`
+- Redéploiement du backend "quotes" avec des répliques du *Pod*:
+`kubectl scale deployments/quotes --replicas=3` (vérifier avec `kubectl get pods`)
+### Le backend base de données
+Ce backend est constitué d'une base de données MariaDB, et sera utilisé en remplacement du précédent backend.
+Dans le dossier `quotemysql/`:
+- Création d'un *Persistent Volume Claim* pour stocker les données pour la base de données même quand les *Pods* qui la font tourner sont supprimés:
+`kubectl create -f mysqlvolume.yaml`
+- Création d'un *Secret* à utiliser avec la base de données:
+`kubectl create -f mysql-secret.yaml`
+- Enregistrement du nom du *Pod* dans une variable:
+`export PODNAME=$(a=$(kubectl get pods | grep 'mysql' | awk '{print $1}') && set – $a && echo $1)`
 
-- Créer un secret à être utilisé avec la base de données: `kubectl create -f mysql-secret.yaml`
+#### Création de la base de données
+-  Copie des commands dans le *Pod*:
+`kubectl cp ./create_database_quotesdb.sql $PODNAME:/tmp/create_database_quotesdb.sql`
 
-- Enregistrer le nom du Pod dans une variable: `export PODNAME=$(a=$(kubectl get pods | grep 'mysql' | awk '{print $1}') && set – $a && echo $1)`
+`kubectl cp ./create_database.sh $PODNAME:/tmp/create_database.sh`
 
-Créer la base de données: copie des commands dans le Pod
-- `kubectl cp ./create_database_quotesdb.sql $PODNAME:/tmp/create_database_quotesdb.sql`
-- `kubectl cp ./create_database.sh $PODNAME:/tmp/create_database.sh`
+- Exécution du script:
+`kubectl exec deploy/mysql -- /bin/bash ./tmp/create_database.sh`
 
-et exécution du script:
-- `kubectl exec deploy/mysql -- /bin/bash ./tmp/create_database.sh`
+#### Création des tables de la base de données
+- Copie des commandes dans le *Pod*:
+`kubectl cp ./create_table_quotes.sql $PODNAME:/tmp/create_table_quotes.sql`
 
-Créer les tables de la base de données: copie des commandes dans le Pod
-- `kubectl cp ./create_table_quotes.sql $PODNAME:/tmp/create_table_quotes.sql`
-- `kubectl cp ./create_tables.sh $PODNAME:/tmp/create_tables.sh`
+`kubectl cp ./create_tables.sh $PODNAME:/tmp/create_tables.sh`
 
-et exécution du script:
-- `kubectl exec deploy/mysql -- /bin/bash ./tmp/create_tables.sh`
+- Exécution du script:
+`kubectl exec deploy/mysql -- /bin/bash ./tmp/create_tables.sh`
 
-Remplir les tables de la base de données:
-- `kubectl cp ./populate_table_quotes_BASH.sql $PODNAME:/tmp/populate_table_quotes_BASH.sql`
-- `kubectl cp ./quotes.csv $PODNAME:/tmp/quotes.csv`
-- `kubectl cp ./populate_tables_BASH.sh $PODNAME:/tmp/populate_tables_BASH.sh`
-- `kubectl exec deploy/mysql -- /bin/bash ./tmp/populate_tables_BASH.sh`
+#### Remplissage des tables de la base de données
+- Copie des commandes dans le *Pod*:
 
-Interroger la base de données:
-- `kubectl cp ./query_table_quotes.sql $PODNAME:/tmp/query_table_quotes.sql`
-- `kubectl cp ./query_table_quotes.sh $PODNAME:/tmp/query_table_quotes.sh`
-- `kubectl exec deploy/mysql -- /bin/bash ./tmp/query_table_quotes.sh`
+`kubectl cp ./populate_table_quotes_BASH.sql $PODNAME:/tmp/populate_table_quotes_BASH.sql`
 
-Utiliser notre base de données comme backend: 
-- fixer la variable environnementale `kubectl set env deployment/quotes DB_SERVICE_NAME=mysql`
-- changer l'image du backend "quotes" pour pointer vers notre nouveau backend `kubectl set image deploy quotes quotes=quay.io/donschenck/quotes:v2`
+`kubectl cp ./quotes.csv $PODNAME:/tmp/quotes.csv`
+
+`kubectl cp ./populate_tables_BASH.sh $PODNAME:/tmp/populate_tables_BASH.sh`
+
+- Exécution du script:
+`kubectl exec deploy/mysql -- /bin/bash ./tmp/populate_tables_BASH.sh`
+
+#### Interrogation de la base de données
+- Copie des commandes dans le *Pod*:
+`kubectl cp ./query_table_quotes.sql $PODNAME:/tmp/query_table_quotes.sql`
+
+`kubectl cp ./query_table_quotes.sh $PODNAME:/tmp/query_table_quotes.sh`
+
+- Exécution du script:
+`kubectl exec deploy/mysql -- /bin/bash ./tmp/query_table_quotes.sh`
+
+#### Utilisation de notre base de données comme backend, en remplacement du backend précédent
+- Fixation de la variable environnementale:
+`kubectl set env deployment/quotes DB_SERVICE_NAME=mysql`
+- Changement de l'image du backend "quotes" pour pointer vers notre nouveau backend:
+`kubectl set image deploy quotes quotes=quay.io/donschenck/quotes:v2`
 
 => fonctionne, nous avons maintenant un site qui charge des citations au hasard depuis la base de données
-## Gérer les Deployments
-- `kubectl delete pod <pod-name>`: arrête un Pod, qui est ensuite normalement relancé automatiquement
-- `kubectl delete deployment <deployment-name>`: arrête effectivement un Pod, sans qu'il soit relancé
-- Dépannage des Pods "pending": https://learn.redhat.com/t5/DO280-Red-Hat-OpenShift/Pending-Pods/td-p/35635
-- [Manage resources in Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
-
-## Monitoring
-Dans Red Hat Openshift Local, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système.
+## Gestion des Deployments
+- Arrêt d'un *Pod*, qui est ensuite normalement relancé automatiquement:
+`kubectl delete pod <pod-name>`
+- Arrêt effectif d'un *Pod*, sans qu'il soit relancé:
+`kubectl delete deployment <deployment-name>`
+- Dépannage des *Pods* "pending":
+[Solved: Pending Pods - Red Hat Learning Community](https://learn.redhat.com/t5/DO280-Red-Hat-OpenShift/Pending-Pods/td-p/35635)
+- Gestion des resources dans Kubernetes:
+[Manage resources in Kubernetes](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
 
 ## Connaissances acquises
 ### Appris:
-- Mettre un place un cluster et s'authentifier
-- Comment le Deployments des Pods sont configurés (notamment les fichiers .yaml) et comment les Pods fonctionnent ensemble (avec en plus l'ajout de Repliques)
-- Comment visualiser le cluster à travers la console web (vue développeur, vue administrateur)
-- Comment diagnostiquer des problèmes basiques (dans mon cas, le manque de mémoire empêchant un Pod d'être relancé)
-
+- Mise un place d'un cluster et authentification
+- Configuration des *Deployments* des *Pods* (notamment les fichiers .yaml) et fonctionnement conjoint des *Pods* (avec en plus l'ajout de *Replicas*)
+- Visualisation du cluster à travers la console web (vue développeur, vue administrateur)
+- Diagnostic des problèmes basiques (dans mon cas, le manque de mémoire empêchant un *Pod* d'être relancé)
 ### Pas appris:
-- Les Nodes: il n'y a qu'un seul Node dans OpenShift Local, et pas de séparation des rôles entre le plan de contrôle et les worker Nodes
-- Monitoring: pas de possibilité de faire un réel monitoring du cluster et de ses composantes (manque de RAM pour activer le Cluster Monitoring Operator); tout au plus, une constatation d'un manque de mémoire via `oc describe pod <pod-name>`
-- Usage approfondi de la console web: Pas d'usage de la console web pour effectuer des modifications ou opérations importantes sur le cluster; seulement pour observer le résultat de mes commandes dans le Terminal
+- Les *Nodes*: il n'y a qu'un seul *Node* dans *OpenShift Local*, et pas de séparation des rôles entre le plan de contrôle et les *worker Nodes*
+- Monitoring: pas de possibilité de faire un réel monitoring du cluster et de ses composantes, En effet, le monitoring "core functionality" [nécessite 14 GiB of RAM](https://access.redhat.com/documentation/th-th/red_hat_openshift_local/2.5/html-single/getting_started_guide/index#starting-monitoring_gsg) (ou 15 GB), ce qui excède les capacités de notre système. Une constatation d'un manque de mémoire qui empechait le lancement d'un *Pod* a toutefois pu etre faite avec `oc describe pod <pod-name>`, mais sans détails.
+- Usage approfondi de la console web: pas d'usage de la console web pour effectuer des modifications ou opérations importantes sur le cluster; seulement pour observer le résultat de mes commandes dans le Terminal

@@ -1,3 +1,5 @@
+N.b.: this document is behind the French version in terms of details, structure, etc. 
+
 Following [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift)
 ## Installing OpenShift Local 2.31 and Kubernetes command line
 
