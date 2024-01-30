@@ -1,12 +1,12 @@
 Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbox for Red Hat OpenShift](https://developers.redhat.com/developer-sandbox/activities/learn-kubernetes-using-red-hat-developer-sandbox-openshift), mais en utilisant *OpenShift Local*, qui permet le déploiement local d'un cluster OpenShift, au lieu du *Developer Sandbox*, un cluster OpenShift géré dans le cloud de Red Hat. Ce choix résulte d'une difficulté à trouver les identifiants pour se connecter depuis le Terminal de ma machine au cluster du *Developer Sandbox* une fois celui-ci mis en place. Rétrospectivement, ces identifiants pouvaient probablement être obtenus à l'aide de la commande `crc console --credentials`.
- Quelques notes pertinentes sur les spécificités d'OpenShift Local, tirées du [guide officiel](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.16/html-single/getting_started_guide/index#differences-from-production-openshift-install_gsg):
+ Quelques notes pertinentes sur les spécificités d'*OpenShift Local*, tirées du [guide officiel](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.16/html-single/getting_started_guide/index#differences-from-production-openshift-install_gsg):
 >- It uses a single node, which behaves as both a control plane and worker node.
 >- It disables the Cluster Monitoring Operator by default. This disabled Operator causes the corresponding part of the web console to be non-functional.
 >- The OpenShift Container Platform cluster runs in a virtual machine known as an _instance_. This might cause other differences, particularly with external networking.
 
 Il faut noter qu'en termes de ressources, faire tourner un cluster OpenShift "classique" (*OpenShift Container Platform*) dans *OpenShift Local* nécessite au moins 9 GB de RAM, 4 coeurs physiques de CPU, et 35 GB d'espace de stockage.
 ## Installation et configuration initiale d'OpenShift Local 2.31 
-- Télécharger le paquet d'installation et et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat, est demandé lors de l'installation)
+- Télécharger le paquet d'installation et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat, est demandé lors de l'installation)
 - L'outil de ligne de commande pour la configuration d'*OpenShift Local* est nommée `crc` d'après *Code-Ready Containers*, l'ancien nom du projet. Il permet de configurer et lancer un cluster, après quoi nous utiliserons la commande `kubectl` pour gérer ce dernier.
 - Avant de mettre en place le cluster, il faut changer le *preset* à "Openshift" pour indiquer que l'on veut lancer un container OpenShift (soit de type *OpenShift Container Platform*, les autres options étant *Podman container runtime* et *Red Hat Device Edge*):e
 `crc config set preset openshift` 
@@ -51,7 +51,7 @@ Une fois terminé:
 - et enfin:  (+ avec `/random` à la fin), test du backend:
 `curl http://<URL-du-dessus>/quotes` 
 ### Le frontend web
-Dans le dossier`quotesweb/k8s`:
+Le frontend web permet d'afficher les citations servies par le backend. Dans le dossier`quotesweb/k8s`:
 - Création d'un *Deployment*:
 `kubectl create -f quotesweb-deployment.yaml`
 - Création d'un *Service*:
@@ -62,8 +62,7 @@ Dans le dossier`quotesweb/k8s`:
 Obtention de l'URL du frontend: 
 `kubectl get routes` (normalement, http://quotesweb-kubectl-tutorial.apps-crc.testing)
 
-Test de l'application: coller l'URL du backend (voir ci-dessus) dans le champ de saisie et cliquer sur le bouton "Start" pour charger les citations choisies au hasard
-voir [[#Le backend simple|section précédente]]
+Test de l'application: coller l'URL du backend (voir [section précédente](#Le-backend-simple)) dans le champ de saisie et cliquer sur le bouton "Start" pour charger les citations choisies au hasard
 
 - Redéploiement du backend "quotes" avec des répliques (*Replicas*) du *Pod*:
 `kubectl scale deployments/quotes --replicas=3` (vérifier avec `kubectl get pods`)
