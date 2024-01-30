@@ -8,7 +8,7 @@ Ce document récapitule le tutoriel [Learn Kubernetes using the Developer Sandbo
 
 Il faut noter qu'en termes de ressources, faire tourner un cluster OpenShift "classique" (*OpenShift Container Platform*) avec *OpenShift Local* nécessite au moins 9 GB de RAM, 4 coeurs physiques de CPU, et 35 GB d'espace de stockage.
 ## Installation et configuration initiale d'OpenShift Local 2.31 
-- Télécharger le paquet d'installation et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire; le *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat, est demandé lors de l'installation)
+- Télécharger le paquet d'installation et le *pull secret* depuis https://console.redhat.com/openshift/create/local (n.b.: un compte Red Hat est nécessaire et donne également accès à un *pull secret*, qui permet de récupérer des images depuis les registres de Red Hat et est demandé lors de l'installation)
 - L'outil de ligne de commande pour la configuration d'*OpenShift Local* est nommée `crc` d'après *Code-Ready Containers*, l'ancien nom du projet. Il permet de configurer et lancer un cluster, après quoi nous utiliserons la commande `kubectl` pour gérer ce dernier.
 - Avant de mettre en place le cluster, il faut changer le *preset* à "Openshift" pour indiquer que l'on veut lancer un container OpenShift (soit de type *OpenShift Container Platform*, les autres options étant *Podman container runtime* et *Red Hat Device Edge*):e
 `crc config set preset openshift` 
